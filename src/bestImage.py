@@ -1,18 +1,15 @@
-# -*-coding:UTF8 -*
-#-------------------------
-# TD Morphologie
-#@author: cteuliere
-#-------------------------
-
+##########################
+##Code made by xerneas02##
+##########################
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 from PIL import Image
 import sys
 
-###############################################################
-# Fonction de seuillage d'une image :
-
+####################################################
+## Denoising function by median of a color image: ##
+####################################################
 def Median(I, D):
     imgFiltre = np.zeros(I.shape)
     for i in range(1, len(I)-int(D/2)):
@@ -29,6 +26,10 @@ def MedianFiltre(I, D, x, y):
     med.sort()
     return med[int(len(med)/2)]
 
+
+############################################################################
+## Function which subtracts from each other all the pixels of two images: ##
+############################################################################
 def soustractionIm(I1, I2):
     Isous = np.zeros(I1.shape)
     for i in range(len(I1)):
@@ -37,7 +38,17 @@ def soustractionIm(I1, I2):
             
     return Isous
 
+###################################################
+## Thresholding function to have a binary image: ##
+###################################################
+
 def seuillageHyst(I, seuilMax, seuilMin):
+    """
+    This function make thresholding by having thresholding sure and one unsure
+    the function convert all the pixel with a higher value than the thresholding sure
+    into white pixel and next all the pixels unsure that tuch a pixel sure into are also
+    convert into white pixel. (the other pixels are black)
+    """
     Is = np.zeros(I.shape)
     for i in range(len(I)):
         for j in range(len(I[i])):
@@ -52,7 +63,10 @@ def seuillageHyst(I, seuilMax, seuilMin):
                     Is[i, j] = 255
                     nbrModif +=1
     return Is
-    
+
+###################################################################
+## Function to get the number of black pixels in a binary image: ##
+###################################################################
 def nbrBlackPixel(I):
     count = 0
     for i in range(len(I)):
@@ -61,14 +75,30 @@ def nbrBlackPixel(I):
                 count += 1
     return count
 
+
+####################################
+## Function to initialize images: ##
+####################################
 def initImage(filename):
+    """
+    This function get an image from the path given, convert this image in black and white
+    and apply a medina filtre to be sure that the image isn't noisy
+    """
     print(filename)
-    im = cv2.imread(filename) #Lecture d'une image avec OpenCV
-    im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY) # Conversion en niveaux de gris
-    im = Median(im, 5)  #Debruitage
+    im = cv2.imread(filename)
+    im = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+    im = Median(im, 5) 
     return im
 
+################################################
+## Function to have the outlines in an image: ##
+################################################
 def getContour(im, element):
+    """
+    This function return the soustraction of the erodation and dilation of the image
+    and that give us an outline of th image.
+    This outline is convert in a binary image.
+    """
     erode1 = cv2.erode(im, element, iterations = 1)
     dilate1 = cv2.dilate(im, element, iterations = 1)
     image = soustractionIm(erode1, dilate1)
@@ -77,7 +107,15 @@ def getContour(im, element):
     Isous = cv2.morphologyEx(Isous, cv2.MORPH_CLOSE, element)
     return Isous
 
+#######################################################
+## Function to get the "best image" out of 4 images: ##
+#######################################################
 def bestImage(im1, im2, im3, im4):
+    """
+    This function get the best image out of 4 images by watching wich of this for images
+    have the most black pixels in there outlines.
+    It's the way i chose to know wich image have the most things to see in it.
+    """
     bestIm = im1
     number = 1
     if nbrBlackPixel(bestIm) < nbrBlackPixel(im2):
@@ -90,37 +128,52 @@ def bestImage(im1, im2, im3, im4):
         bestIm = im4
         number = 4
     return number
-###############################################################
-# Fonction principale du script :
+
+###################################
+### Main function of the script: ##
+###################################
 def main(name = "ZoRfAzQpDIZaD-QGoXTyDg_"):
+    """
+    This function get the name of the picture in entry take the 4 pictures with that name in the folder Image
+    and return wich one is the "best" image.
+    """
+    #------------------------
+    # Image Loading
+    #------------------------
     
-    #------------------------
-    # Chargement de l'image
-    #------------------------
+    ## Get the color images
     im1Couleur = cv2.imread("Image/2017_" + name + "0.jpg")
     im2Couleur = cv2.imread("Image/2017_" + name + "90.jpg")
     im3Couleur = cv2.imread("Image/2017_" + name + "180.jpg")
     im4Couleur = cv2.imread("Image/2017_" + name + "270.jpg")
-    im1 = initImage("Image/2017_" + name + "0.jpg") #Lecture d'une image avec OpenCV
+    
+    ## Get the black ans white images
+    im1 = initImage("Image/2017_" + name + "0.jpg") 
     im2 = initImage("Image/2017_" + name + "90.jpg")
     im3 = initImage("Image/2017_" + name + "180.jpg")
     im4 = initImage("Image/2017_" + name + "270.jpg")
+    
     #---------------------------
-    # Contoure
+    # Outlines Images
     #---------------------------
+    
     element = np.ones((5,5),np.uint8)
     im1Modif = getContour(im1, element)
     im2Modif = getContour(im2, element)
     im3Modif = getContour(im3, element)
     im4Modif = getContour(im4, element)
-    #opening= cv2.morphologyEx(closing, cv2.MORPH_OPEN, element)
-    #closing = cv2.morphologyEx(opening, cv2.MORPH_CLOSE, element)
+    
     #-------------------------
-    # Affichage du résultat : 
+    # Search the best image
     #-------------------------
 
     number = bestImage(im1Modif, im2Modif, im3Modif, im4Modif)
-
+    
+    #--------------------------
+    # Return wich image to post
+    #--------------------------
+    
+    # this just return th end of the name beacause it's the only thing that chages betewen the name of the different images
     if number == 1:
         return "0.jpg"
     elif number == 2:
