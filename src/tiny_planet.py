@@ -1,3 +1,9 @@
+"""
+    ORIGINAL CODE FROM:
+        Rich Wareham
+        http://www.richwareham.com/little-planet-projection/
+"""
+
 import os # for file and pathname handling functions
 import matplotlib.pyplot as plt
 import numpy as np
