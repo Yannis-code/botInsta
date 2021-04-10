@@ -13,11 +13,11 @@ for f in files:
 
 lat, lon, country = getImage.start()
 
-"""
+USERNAME = your_username
+PASSWORD = your_password
+
 bot = Client()
-bot.login("imageduglobe", "InstaBotTotorat")
-
-
+bot.login(USERNAME, PASSWORD)
 
 yannis_id = bot.user_info(1722473835)
 mathis_id = bot.user_info(19801251168)
@@ -35,4 +35,3 @@ id = str(bot.album_upload(
 )).split(" ")[1]
 
 print("Images published!")
-"""
