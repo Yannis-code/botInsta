@@ -29,7 +29,7 @@ def start():
     country = location[len(location)-1]
     
     # Download of 4 tiles of the panorama
-    streetview.download_flats(panoid, key=key, flat_dir=dirc, fov=90, width=1080, height=1090)
+    streetview.download_flats(panoid, key=key, flat_dir=dirc, fov=90, width=640, height=640)
 
     # Download of the panorama "photosphere"
     panorama = streetview.download_panorama_v3(panoid, zoom=3, disp=False)
