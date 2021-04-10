@@ -15,8 +15,8 @@ for f in files:
 # Gathering some information about the images
 lat, lon, country = getImage.start()
 
-USERNAME = your_username
-PASSWORD = your_password
+USERNAME = account_username
+PASSWORD = acount_password
 
 # Creating a bot from instagrapi and login in into the instagram account
 bot = Client()
