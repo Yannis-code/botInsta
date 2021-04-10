@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Original code is from https://github.com/robolyst/streetview
+
+Modification by cplusx: https://github.com/cplusx/google-street-view-panorama-download
 Functions added in this file are
 download_panorama_v1, download_panorama_v2, download_panorama_v3
 Usage: 
@@ -8,6 +10,8 @@ Usage:
     panoids = panoids( lat, lon )
     panoid = panoids[0]['panoid']
     panorama_img = download_panorama_v3(panoid, zoom=2)
+    
+Modification in "panoids(lat, lon, closest=False, disp=False, proxies=None)" line 55-74
 """
 
 import re
@@ -68,6 +72,7 @@ def panoids(lat, lon, closest=False, disp=False, proxies=None):
             lon += add
     trace += "nombre de tentative : {}".format(count)
     print(trace)
+    
     # Get all the panorama ids and coordinates
     # I think the latest panorama should be the first one. And the previous
     # successive ones ought to be in reverse order from bottom to top. The final
